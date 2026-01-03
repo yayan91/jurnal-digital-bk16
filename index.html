@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurnal BK</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        .hidden { display: none !important; }
+        .loader { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; display: flex; justify-content: center; align-items: center; color: white; flex-direction: column; }
+        .spin { width: 40px; height: 40px; border: 4px solid #fff; border-top-color: transparent; border-radius: 50%; animation: s 1s linear infinite; }
+        @keyframes s { to { transform: rotate(360deg); } }
+
+        /* Navigation Tabs */
+        .tab-btn { padding: 15px; text-align: center; cursor: pointer; font-weight: bold; color: #64748b; border-bottom: 4px solid transparent; flex: 1; }
+        .tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; background: #eff6ff; }
+
+        /* Print Style Folio */
+        @media print {
+            @page { size: 21.5cm 33cm; margin: 1.5cm; }
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { position: absolute; left: 0; top: 0; width: 100%; color: black; font-family: 'Times New Roman', serif; background: white; }
+            .kop { text-align: center; border-bottom: 3px double black; padding-bottom: 10px; margin-bottom: 20px; }
+            .k1 { font-size: 14pt; font-weight: bold; text-transform: uppercase; }
+            .k2 { font-size: 16pt; font-weight: bold; text-transform: uppercase; margin: 5px 0; }
+            .k3 { font-size: 10pt; font-style: italic; }
+            .tbl { width: 100%; border-collapse: collapse; font-size: 11pt; }
+            .tbl td { border: 1px solid black; padding: 5px; vertical-align: top; }
+            .lbl { font-weight: bold; width: 30%; background: #eee; }
+            .ttd-wrap { display: flex; justify-content: space-between; margin-top: 50px; page-break-inside: avoid; }
+            .ttd-box { text-align: center; width: 40%; }
+            .ttd-line { font-weight: bold; text-decoration: underline; margin-top: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading" class="loader hidden">
+        <div class="spin mb-2"></div>
+        <p>Mohon Tunggu...</p>
+    </div>
+
+    <div id="pageLogin" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded shadow-lg w-full max-w-sm border-t-4 border-blue-600">
+            <h2 class="text-2xl font-bold text-center mb-6">LOGIN JURNAL BK</h2>
+            <form onsubmit="doLogin(event)">
+                <input id="u" type="text" placeholder="Username" class="w-full border p-2 rounded mb-3" required>
+                <input id="p" type="password" placeholder="Password" class="w-full border p-2 rounded mb-4" required>
+                <button class="w-full bg-blue-600 text-white font-bold py-2 rounded">MASUK</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="pageMain" class="hidden min-h-screen pb-20">
+        <header class="bg-white shadow sticky top-0 z-50">
+            <div class="max-w-4xl mx-auto flex justify-between items-center p-4">
+                <div>
+                    <div class="font-bold text-lg text-blue-900" id="dSekolah">...</div>
+                    <div class="text-xs text-gray-500">Guru: <span id="dGuru" class="font-bold text-black"></span></div>
+                </div>
+                <button onclick="logout()" class="text-xs text-red-500 underline">Logout</button>
+            </div>
+            <div class="max-w-4xl mx-auto flex bg-white border-t">
+                <div onclick="switchTab('input')" id="tab1" class="tab-btn active"><i class="fas fa-edit"></i> INPUT JURNAL</div>
+                <div onclick="switchTab('history')" id="tab2" class="tab-btn"><i class="fas fa-history"></i> RIWAYAT</div>
+            </div>
+        </header>
+
+        <div class="max-w-4xl mx-auto mt-6 px-4">
+            
+            <div id="viewInput">
+                <div class="bg-white p-6 rounded shadow">
+                    <div class="flex justify-between mb-4 border-b pb-2">
+                        <h3 class="font-bold text-lg" id="formTitle">Isi Jurnal Baru</h3>
+                        <button onclick="resetForm()" id="btnCancel" class="hidden text-red-500 text-sm">Batal Edit</button>
+                    </div>
+
+                    <form id="formJurnal" onsubmit="submitData(event)">
+                        <input type="hidden" name="id" id="inputId">
+                        
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div><label class="text-xs font-bold block mb-1">Tanggal</label><input type="date" name="tanggal" required class="w-full border p-2 rounded bg-blue-50"></div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="text-xs font-bold block mb-1">Jam</label><input type="text" name="jam" placeholder="1-2" class="w-full border p-2 rounded"></div>
+                                <div><label class="text-xs font-bold block mb-1">Waktu</label><input type="text" name="waktu" placeholder="40m" class="w-full border p-2 rounded"></div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div><label class="text-xs font-bold block mb-1">Sasaran Layanan</label><input type="text" name="sasaran" required class="w-full border p-2 rounded"></div>
+                            <div><label class="text-xs font-bold block mb-1">Kelas</label><input type="text" name="kelas" class="w-full border p-2 rounded"></div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div><label class="text-xs font-bold block mb-1">Bidang</label><select name="bidang" class="w-full border p-2 rounded"><option>Pribadi</option><option>Sosial</option><option>Belajar</option><option>Karir</option></select></div>
+                            <div><label class="text-xs font-bold block mb-1">Jenis Layanan</label><input type="text" name="jenis" list="ls" class="w-full border p-2 rounded"><datalist id="ls"><option value="Konseling Individu"><option value="Bimbingan Kelompok"></datalist></div>
+                        </div>
+
+                        <div class="space-y-3 mb-4">
+                            <div><label class="text-xs font-bold block mb-1">Topik / Masalah</label><input type="text" name="topik" class="w-full border p-2 rounded"></div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div><label class="text-xs font-bold block mb-1">Tujuan</label><textarea name="tujuan" rows="2" class="w-full border p-2 rounded"></textarea></div>
+                                <div><label class="text-xs font-bold block mb-1">Media</label><input type="text" name="media" class="w-full border p-2 rounded"></div>
+                            </div>
+                            <div><label class="text-xs font-bold block mb-1">Ringkasan</label><textarea name="ringkasan" rows="3" class="w-full border p-2 rounded"></textarea></div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-4 bg-gray-50 p-3 rounded mb-4">
+                            <div><label class="text-xs font-bold block">Evaluasi</label><textarea name="evaluasi" rows="2" class="w-full border p-2 rounded"></textarea></div>
+                            <div><label class="text-xs font-bold block">Tindak Lanjut</label><textarea name="tindaklanjut" rows="2" class="w-full border p-2 rounded"></textarea></div>
+                            <div><label class="text-xs font-bold block">Catatan</label><textarea name="catatan" rows="2" class="w-full border p-2 rounded"></textarea></div>
+                        </div>
+
+                        <button id="btnSimpan" class="w-full bg-green-600 text-white font-bold py-3 rounded hover:bg-green-700">SIMPAN JURNAL</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="viewHistory" class="hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold">Riwayat Anda</h3>
+                    <button onclick="loadHistory()" class="text-blue-600 underline text-sm">Refresh Data</button>
+                </div>
+                <div id="listContainer" class="space-y-3"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="printArea" class="hidden">
+        <div class="kop">
+            <div class="k1" id="p_pem"></div>
+            <div class="k1" id="p_ins"></div>
+            <div class="k2" id="p_sek"></div>
+            <div class="k3" id="p_almt"></div>
+        </div>
+        <div style="text-align:center; font-weight:bold; text-decoration:underline; font-size:14pt; margin:20px 0;">LAPORAN KEGIATAN HARIAN</div>
+        
+        <table class="tbl">
+            <tr><td class="lbl">Hari, Tanggal</td><td id="t1"></td></tr>
+            <tr><td class="lbl">Jam / Waktu</td><td><span id="t2"></span> / <span id="t3"></span></td></tr>
+            <tr><td class="lbl">Sasaran</td><td id="t4"></td></tr>
+            <tr><td class="lbl">Kelas</td><td id="t5"></td></tr>
+            <tr><td class="lbl">Bidang / Jenis</td><td><span id="t6"></span> / <span id="t7"></span></td></tr>
+            <tr><td class="lbl">Topik</td><td id="t8"></td></tr>
+            <tr><td class="lbl">Tujuan</td><td id="t9"></td></tr>
+            <tr><td class="lbl">Media</td><td id="t10"></td></tr>
+            <tr><td class="lbl">Ringkasan</td><td id="t11" style="height:100px"></td></tr>
+            <tr><td class="lbl">Evaluasi</td><td id="t12"></td></tr>
+            <tr><td class="lbl">Tindak Lanjut</td><td id="t13"></td></tr>
+            <tr><td class="lbl">Catatan</td><td id="t14"></td></tr>
+        </table>
+
+        <div class="ttd-wrap">
+            <div class="ttd-box"><p>Mengetahui,</p><p>Kepala Sekolah</p><div class="ttd-line" id="pkep"></div><p>NIP. <span id="pnipkep"></span></p></div>
+            <div class="ttd-box"><p>Makassar, <span id="ptglttd"></span></p><p>Guru BK</p><div class="ttd-line" id="pguru"></div><p>NIP. <span id="pnipguru"></span></p></div>
+        </div>
+    </div>
+
+    <script>
+        // --- PASTE URL BARU DI SINI ---
+        const API_URL = "https://script.google.com/macros/s/AKfycbxMbp7LlrCgbwoAIB_xCtrHCTpRI9s2zKT7BhH7E-d2qOnP2O8AzO4vxjl-EsaDMTwGog/exec"; 
+
+        let user=null, conf=null, historyData=[];
+
+        function switchTab(t) {
+            document.getElementById('viewInput').classList.add('hidden');
+            document.getElementById('viewHistory').classList.add('hidden');
+            document.getElementById('tab1').classList.remove('active');
+            document.getElementById('tab2').classList.remove('active');
+
+            if(t=='input'){
+                document.getElementById('viewInput').classList.remove('hidden');
+                document.getElementById('tab1').classList.add('active');
+            } else {
+                document.getElementById('viewHistory').classList.remove('hidden');
+                document.getElementById('tab2').classList.add('active');
+                loadHistory();
+            }
+        }
+
+        async function doLogin(e) {
+            e.preventDefault(); loading(true);
+            let u=document.getElementById('u').value, p=document.getElementById('p').value;
+            try {
+                let r=await fetch(`${API_URL}?action=login&u=${u}&p=${p}`).then(x=>x.json());
+                if(r.status=='sukses'){
+                    user=r;
+                    conf=await fetch(`${API_URL}?action=getConfig`).then(x=>x.json());
+                    document.getElementById('pageLogin').classList.add('hidden');
+                    document.getElementById('pageMain').classList.remove('hidden');
+                    document.getElementById('dSekolah').innerText=conf.sekolah;
+                    document.getElementById('dGuru').innerText=user.nama;
+                    switchTab('input');
+                } else alert(r.message);
+            } catch(e){ alert("Koneksi Gagal. Cek URL atau Internet."); }
+            loading(false);
+        }
+
+        async function submitData(e) {
+            e.preventDefault();
+            if(!confirm("Simpan Data?")) return;
+            loading(true);
+            
+            let fd = new FormData(document.getElementById('formJurnal'));
+            let data = Object.fromEntries(fd.entries());
+            data.action="simpan"; data.namaGuru=user.nama; data.nipGuru=user.nip; 
+            data.alamatGuru=user.alamat; data.ta=conf.ta; data.semester=conf.semester;
+
+            try {
+                // FIXED: Fetch tanpa Header Content-Type agar tidak diblokir Google
+                let r = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                let res = await r.json();
+                
+                if(res.status=='sukses'){
+                    alert("Berhasil!");
+                    resetForm();
+                    switchTab('history');
+                } else alert("Gagal: "+res.message);
+            } catch(x){ alert("Error Simpan: "+x); }
+            loading(false);
+        }
+
+        async function deleteItem(id) {
+            if(!confirm("Hapus Permanen?")) return;
+            loading(true);
+            try {
+                let r = await fetch(API_URL, {method:'POST', body:JSON.stringify({action:'hapus', id:id})});
+                let res = await r.json();
+                if(res.status=='sukses') loadHistory();
+                else alert(res.message);
+            } catch(e){ alert("Gagal Hapus"); }
+            loading(false);
+        }
+
+        async function loadHistory() {
+            try {
+                let r=await fetch(`${API_URL}?action=getHistory&nip=${user.nip}`).then(x=>x.json());
+                historyData = r.data;
+                let h="";
+                if(historyData.length==0) h="<div class='text-center p-5 text-gray-400'>Belum ada data</div>";
+                
+                historyData.forEach((d,i)=>{
+                    h += `<div class="bg-white p-4 border rounded shadow hover:shadow-lg transition">
+                        <div class="flex justify-between">
+                            <div class="font-bold text-blue-800">${d.topik}</div>
+                            <div class="text-xs text-gray-500">${d.tanggal.substring(0,10)}</div>
+                        </div>
+                        <div class="text-sm mb-2">${d.sasaran} (${d.kelas}) - ${d.jenis}</div>
+                        <div class="flex gap-2 border-t pt-2">
+                            <button onclick="editItem(${i})" class="flex-1 bg-yellow-100 text-yellow-700 py-1 text-xs font-bold rounded">EDIT</button>
+                            <button onclick="printItem(${i})" class="flex-1 bg-green-100 text-green-700 py-1 text-xs font-bold rounded">PDF</button>
+                            <button onclick="deleteItem('${d.id}')" class="flex-1 bg-red-100 text-red-700 py-1 text-xs font-bold rounded">HAPUS</button>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('listContainer').innerHTML=h;
+            } catch(e){}
+        }
+
+        function editItem(i) {
+            let d = historyData[i];
+            switchTab('input');
+            document.getElementById('inputId').value=d.id;
+            let f=document.getElementById('formJurnal');
+            f.tanggal.value=d.tanggal.substring(0,10); f.jam.value=d.jam; f.waktu.value=d.waktu;
+            f.sasaran.value=d.sasaran; f.kelas.value=d.kelas; f.bidang.value=d.bidang; f.jenis.value=d.jenis;
+            f.topik.value=d.topik; f.tujuan.value=d.tujuan; f.media.value=d.media;
+            f.ringkasan.value=d.ringkasan; f.evaluasi.value=d.evaluasi;
+            f.tindaklanjut.value=d.tindaklanjut; f.catatan.value=d.catatan;
+            
+            document.getElementById('formTitle').innerText="EDIT DATA";
+            document.getElementById('btnSimpan').innerText="UPDATE DATA";
+            document.getElementById('btnSimpan').classList.add('bg-orange-500');
+            document.getElementById('btnCancel').classList.remove('hidden');
+            window.scrollTo(0,0);
+        }
+
+        function resetForm(){
+            document.getElementById('formJurnal').reset();
+            document.getElementById('inputId').value="";
+            document.getElementById('formTitle').innerText="Isi Jurnal Baru";
+            document.getElementById('btnSimpan').innerText="SIMPAN JURNAL";
+            document.getElementById('btnSimpan').classList.remove('bg-orange-500');
+            document.getElementById('btnCancel').classList.add('hidden');
+        }
+
+        function printItem(i){
+            let d=historyData[i];
+            // Mapping Header
+            document.getElementById('p_pem').innerText=conf.pem;
+            document.getElementById('p_ins').innerText=conf.instansi;
+            document.getElementById('p_sek').innerText=conf.sekolah;
+            document.getElementById('p_almt').innerText=conf.alamat;
+            
+            // Mapping Isi
+            document.getElementById('t1').innerText=d.tanggal.substring(0,10);
+            document.getElementById('t2').innerText=d.jam; document.getElementById('t3').innerText=d.waktu;
+            document.getElementById('t4').innerText=d.sasaran; document.getElementById('t5').innerText=d.kelas;
+            document.getElementById('t6').innerText=d.bidang; document.getElementById('t7').innerText=d.jenis;
+            document.getElementById('t8').innerText=d.topik; document.getElementById('t9').innerText=d.tujuan;
+            document.getElementById('t10').innerText=d.media; document.getElementById('t11').innerText=d.ringkasan;
+            document.getElementById('t12').innerText=d.evaluasi; document.getElementById('t13').innerText=d.tindaklanjut;
+            document.getElementById('t14').innerText=d.catatan;
+
+            // Mapping TTD
+            document.getElementById('pkep').innerText=conf.kepsek; document.getElementById('pnipkep').innerText=conf.nip_kepsek;
+            document.getElementById('pguru').innerText=user.nama; document.getElementById('pnipguru').innerText=user.nip;
+            document.getElementById('ptglttd').innerText=d.tanggal.substring(0,10);
+            
+            window.print();
+        }
+
+        function logout(){location.reload();}
+        function loading(x){document.getElementById('loading').classList.toggle('hidden',!x);}
+    </script>
+</body>
+</html>
