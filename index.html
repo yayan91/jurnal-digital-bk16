@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jurnal Digital BK</title>
+    <title>Jurnal Digital BK - Profesional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -49,7 +49,7 @@
         @keyframes modalIn { to { transform: scale(1); opacity: 1; } }
 
         /* TAB NAVIGATION */
-        .nav-pill { cursor: pointer; padding: 12px 20px; font-weight: 600; color: #64748b; border-radius: 12px; transition: all 0.3s; display: flex; align-items: center; gap: 8px; justify-content: center; }
+        .nav-pill { cursor: pointer; padding: 12px 20px; font-weight: 600; color: #64748b; border-radius: 12px; transition: all 0.3s; display: flex; align-items: center; gap: 8px; justify-content: center; white-space: nowrap; }
         .nav-pill:hover { background-color: #f1f5f9; color: #0f172a; }
         .nav-pill.active { background-color: #0284c7; color: white; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }
 
@@ -57,6 +57,10 @@
         .glass-panel { background: white; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         .input-field { width: 100%; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 10px; transition: 0.2s; font-size: 14px; }
         .input-field:focus { border-color: #0ea5e9; outline: none; ring: 3px; --tw-ring-color: rgba(14, 165, 233, 0.2); }
+
+        /* Stat Cards for Dashboard */
+        .stat-card { background: white; border-radius: 16px; padding: 20px; border: 1px solid #e2e8f0; position: relative; overflow: hidden; transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); }
 
         /* --- CSS KHUSUS CETAK PDF --- */
         @media print {
@@ -79,12 +83,8 @@
             .col-label { width: 28%; font-weight: bold; background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; }
             
             .kop-container { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px double black; padding-bottom: 15px; margin-bottom: 25px; }
-            
-            /* Logo Print dengan Mix Blend Mode Multiply agar background putih jadi transparan */
             .kop-logo { width: 90px; height: 90px; object-fit: contain; mix-blend-mode: multiply; }
-            
             .kop-text { text-align: center; flex: 1; padding: 0 10px; }
-            
             .k1 { font-size: 14pt; font-weight: bold; text-transform: uppercase; }
             .k2 { font-size: 16pt; font-weight: bold; text-transform: uppercase; margin: 2px 0; }
             .k3 { font-size: 10pt; font-style: italic; }
@@ -167,20 +167,20 @@
             <div class="max-w-6xl mx-auto px-4 py-3">
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <div class="flex items-center gap-4 w-full md:w-auto">
-                        <div class="bg-gradient-to-br from-brand-500 to-brand-700 w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
-                            <i class="fa-solid fa-graduation-cap"></i>
+                        <div class="bg-gradient-to-br from-brand-500 to-brand-700 w-12 h-12 rounded-lg flex items-center justify-center text-white shadow-lg shadow-brand-500/30 shrink-0">
+                            <i class="fa-solid fa-graduation-cap text-xl"></i>
                         </div>
                         <div>
                             <div class="text-[10px] font-bold text-brand-600 uppercase tracking-wide" id="headerDate">...</div>
                             <div class="font-bold text-lg text-slate-800 leading-tight" id="dSekolah">Loading...</div>
+                            <div class="text-xs font-semibold text-slate-500 flex items-center gap-1 mt-1">
+                                <i class="fa-solid fa-user-tie text-brand-500"></i>
+                                <span id="headerNamaGuru">...</span>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="flex items-center gap-3 w-full md:w-auto justify-end">
-                        <div class="hidden md:block text-right mr-2">
-                            <div class="text-xs text-slate-400">Logged in as</div>
-                            <div class="font-bold text-sm text-slate-700" id="dGuru">...</div>
-                        </div>
                         <button onclick="logout()" class="text-xs bg-red-50 text-red-600 border border-red-100 px-4 py-2.5 rounded-full hover:bg-red-600 hover:text-white font-bold transition flex items-center gap-2 shadow-sm">
                             <i class="fa-solid fa-power-off"></i> Keluar
                         </button>
@@ -189,20 +189,144 @@
             </div>
         </header>
 
-        <div class="bg-white border-b border-slate-200 sticky top-[73px] md:top-[65px] z-30">
-            <div class="max-w-6xl mx-auto px-4 py-2 flex gap-2 overflow-x-auto">
-                <div onclick="switchTab('input')" id="tab1" class="nav-pill active flex-1 md:flex-none md:w-40">
-                    <i class="fa-regular fa-pen-to-square"></i> INPUT
+        <div class="bg-white border-b border-slate-200 sticky top-[80px] md:top-[74px] z-30 shadow-sm">
+            <div class="max-w-6xl mx-auto px-4 py-2 flex gap-2 overflow-x-auto no-scrollbar">
+                <div onclick="switchTab('dashboard')" id="tabDash" class="nav-pill active flex-1 md:flex-none md:w-36">
+                    <i class="fa-solid fa-chart-pie"></i> DASHBOARD
                 </div>
-                <div onclick="switchTab('history')" id="tab2" class="nav-pill flex-1 md:flex-none md:w-40">
+                <div onclick="switchTab('input')" id="tabInput" class="nav-pill flex-1 md:flex-none md:w-36">
+                    <i class="fa-regular fa-pen-to-square"></i> INPUT JURNAL
+                </div>
+                <div onclick="switchTab('history')" id="tabHistory" class="nav-pill flex-1 md:flex-none md:w-36">
                     <i class="fa-solid fa-clock-rotate-left"></i> RIWAYAT
+                </div>
+                <div onclick="switchTab('profile')" id="tabProfile" class="nav-pill flex-1 md:flex-none md:w-36">
+                    <i class="fa-solid fa-id-card"></i> INFO GURU
                 </div>
             </div>
         </div>
 
         <div class="max-w-6xl mx-auto w-full px-4 py-8 flex-grow">
             
-            <div id="viewInput" class="animate-fade-in-up">
+            <div id="viewDashboard" class="animate-fade-in-up">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Ringkasan Kinerja</h2>
+                    <p class="text-slate-500 text-sm">Statistik layanan Bimbingan dan Konseling Anda.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="stat-card border-l-4 border-l-brand-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase">Total Jurnal</p>
+                                <h3 class="text-3xl font-bold text-slate-800 mt-1" id="dashTotal">0</h3>
+                            </div>
+                            <div class="bg-brand-50 text-brand-600 p-2 rounded-lg"><i class="fa-solid fa-book"></i></div>
+                        </div>
+                    </div>
+                    <div class="stat-card border-l-4 border-l-green-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase">Total Layanan</p>
+                                <h3 class="text-3xl font-bold text-slate-800 mt-1" id="dashLayanan">0</h3>
+                            </div>
+                            <div class="bg-green-50 text-green-600 p-2 rounded-lg"><i class="fa-solid fa-users"></i></div>
+                        </div>
+                        <p class="text-[10px] text-green-600 mt-2 font-bold"><i class="fa-solid fa-arrow-up"></i> Siswa Terlayani</p>
+                    </div>
+                    <div class="stat-card border-l-4 border-l-yellow-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase">Bidang Dominan</p>
+                                <h3 class="text-lg font-bold text-slate-800 mt-1 truncate" id="dashBidang">-</h3>
+                            </div>
+                            <div class="bg-yellow-50 text-yellow-600 p-2 rounded-lg"><i class="fa-solid fa-chart-simple"></i></div>
+                        </div>
+                    </div>
+                    <div class="stat-card border-l-4 border-l-purple-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-slate-400 uppercase">Status Sistem</p>
+                                <h3 class="text-lg font-bold text-slate-800 mt-1">ONLINE</h3>
+                            </div>
+                            <div class="bg-purple-50 text-purple-600 p-2 rounded-lg"><i class="fa-solid fa-wifi"></i></div>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-2">Versi 2.0 (Pro)</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-brand-600 to-brand-800 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden shadow-xl mb-8">
+                    <div class="absolute right-0 top-0 h-full w-1/3 bg-white/10 skew-x-12 translate-x-12"></div>
+                    <div class="relative z-10">
+                        <h3 class="text-xl font-bold mb-2">Selamat Datang di Jurnal Profesional!</h3>
+                        <p class="text-brand-100 text-sm max-w-xl leading-relaxed">Kelola administrasi BK dengan lebih mudah, rapi, dan akuntabel. Pastikan Anda mengisi jurnal segera setelah layanan diberikan agar data selalu mutakhir.</p>
+                        <button onclick="switchTab('input')" class="mt-4 bg-white text-brand-700 px-5 py-2 rounded-lg font-bold text-sm hover:bg-brand-50 transition shadow-lg">
+                            <i class="fa-solid fa-plus mr-1"></i> Input Jurnal Baru
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-6">
+                    <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-brand-500"></i> Aktivitas Terakhir
+                    </h3>
+                    <div id="dashboardRecentList" class="space-y-3">
+                        <div class="text-center py-4 text-slate-400 text-sm italic">Belum ada data dimuat. Silakan klik menu "Riwayat" untuk memuat data.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="viewProfile" class="hidden animate-fade-in-up">
+                <div class="max-w-2xl mx-auto">
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+                        <div class="h-32 bg-gradient-to-r from-brand-600 to-brand-800 relative">
+                            <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/20 to-transparent"></div>
+                        </div>
+                        <div class="px-8 pb-8 relative">
+                            <div class="w-24 h-24 bg-white p-1 rounded-full absolute -top-12 left-8 shadow-lg">
+                                <div class="w-full h-full bg-slate-100 rounded-full flex items-center justify-center text-slate-300 text-4xl overflow-hidden">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-16">
+                                <h2 class="text-2xl font-bold text-slate-800" id="profNama">Nama Guru</h2>
+                                <p class="text-brand-600 font-semibold" id="profSekolah">Nama Sekolah</p>
+                                
+                                <div class="mt-6 space-y-4">
+                                    <div class="flex items-center gap-4 p-3 rounded-lg bg-slate-50 border border-slate-100">
+                                        <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center"><i class="fa-solid fa-id-badge"></i></div>
+                                        <div>
+                                            <p class="text-[10px] font-bold text-slate-400 uppercase">NIP / NI P3K</p>
+                                            <p class="font-bold text-slate-700" id="profNip">-</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4 p-3 rounded-lg bg-slate-50 border border-slate-100">
+                                        <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center"><i class="fa-solid fa-map-location-dot"></i></div>
+                                        <div>
+                                            <p class="text-[10px] font-bold text-slate-400 uppercase">Alamat Domisili</p>
+                                            <p class="font-bold text-slate-700" id="profAlamat">-</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4 p-3 rounded-lg bg-slate-50 border border-slate-100">
+                                        <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center"><i class="fa-solid fa-school"></i></div>
+                                        <div>
+                                            <p class="text-[10px] font-bold text-slate-400 uppercase">Instansi</p>
+                                            <p class="font-bold text-slate-700" id="profInstansi">-</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+                                    <p class="text-xs text-slate-400">Data ini diambil otomatis dari database kepegawaian aplikasi.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="viewInput" class="hidden animate-fade-in-up">
                 <div class="glass-panel p-6 md:p-8">
                     <div class="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
                         <div>
@@ -317,7 +441,7 @@
                 <div id="listContainer" class="space-y-4"></div>
 
                 <div id="paginationControls" class="flex justify-center items-center gap-4 mt-8">
-                    </div>
+                </div>
             </div>
 
         </div>
@@ -390,37 +514,81 @@
         document.getElementById('headerDate').innerText = new Date().toLocaleDateString('id-ID', options).toUpperCase();
 
         function switchTab(t){
+            // Sembunyikan semua view
+            document.getElementById('viewDashboard').classList.add('hidden');
             document.getElementById('viewInput').classList.add('hidden');
             document.getElementById('viewHistory').classList.add('hidden');
-            document.getElementById('tab1').classList.remove('active');
-            document.getElementById('tab2').classList.remove('active');
-            if(t=='input'){
+            document.getElementById('viewProfile').classList.add('hidden');
+
+            // Reset tombol navigasi
+            document.querySelectorAll('.nav-pill').forEach(el => el.classList.remove('active'));
+
+            // Aktifkan tab yang dipilih
+            if(t == 'dashboard'){
+                document.getElementById('viewDashboard').classList.remove('hidden');
+                document.getElementById('tabDash').classList.add('active');
+                updateDashboard(); // Hitung ulang statistik
+                if(historyData.length == 0) loadHistory(true); // Load silent background
+            }
+            else if(t == 'input'){
                 document.getElementById('viewInput').classList.remove('hidden');
-                document.getElementById('tab1').classList.add('active');
-            } else {
+                document.getElementById('tabInput').classList.add('active');
+            } 
+            else if(t == 'history'){
                 document.getElementById('viewHistory').classList.remove('hidden');
-                document.getElementById('tab2').classList.add('active');
+                document.getElementById('tabHistory').classList.add('active');
                 if(historyData.length == 0) loadHistory();
+            } 
+            else if(t == 'profile'){
+                document.getElementById('viewProfile').classList.remove('hidden');
+                document.getElementById('tabProfile').classList.add('active');
             }
         }
 
-        // --- FUNGSI INFO APLIKASI (POPUP BARU) ---
+        // --- FUNGSI UPDATE DASHBOARD ---
+        function updateDashboard(){
+            // Hitung Total Jurnal
+            document.getElementById('dashTotal').innerText = historyData.length;
+
+            if(historyData.length > 0){
+                // Hitung Statistik Sederhana
+                let bidangCount = {};
+                historyData.forEach(d => {
+                    bidangCount[d.bidang] = (bidangCount[d.bidang] || 0) + 1;
+                });
+                
+                // Cari Bidang Dominan
+                let dominant = Object.keys(bidangCount).reduce((a, b) => bidangCount[a] > bidangCount[b] ? a : b);
+                document.getElementById('dashBidang').innerText = dominant;
+                document.getElementById('dashLayanan').innerText = historyData.length; // Asumsi 1 jurnal = 1 layanan
+
+                // Tampilkan List Kecil (3 Terakhir)
+                let recentHtml = '';
+                let top3 = historyData.slice(0, 3);
+                top3.forEach(d => {
+                    recentHtml += `
+                        <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-sm transition cursor-pointer">
+                            <div>
+                                <div class="font-bold text-xs text-slate-800">${d.topik}</div>
+                                <div class="text-[10px] text-slate-500">${d.tanggal.substring(0,10)} - ${d.sasaran}</div>
+                            </div>
+                            <span class="text-[10px] bg-brand-100 text-brand-600 px-2 py-1 rounded font-bold">${d.bidang}</span>
+                        </div>
+                    `;
+                });
+                document.getElementById('dashboardRecentList').innerHTML = recentHtml;
+
+            } else {
+                document.getElementById('dashBidang').innerText = "-";
+                document.getElementById('dashboardRecentList').innerHTML = `<div class="text-center py-4 text-slate-400 text-sm italic">Belum ada data.</div>`;
+            }
+        }
+
         function showAppInfo() {
             Swal.fire({
-                title: 'Panduan Aplikasi Jurnal BK',
-                html: `
-                <div class="text-left text-sm text-slate-600 space-y-3">
-                    <p><b>1. Masuk Aplikasi:</b> Gunakan NIP/Username dan Password yang telah diberikan Admin.</p>
-                    <p><b>2. Input Jurnal:</b> Isi formulir kegiatan layanan BK pada menu 'Input'. Pastikan semua kolom terisi dengan baik.</p>
-                    <p><b>3. Riwayat & Cetak:</b> Lihat data yang tersimpan di menu 'Riwayat'. Anda bisa mengedit, menghapus, atau mencetak Laporan PDF per kegiatan.</p>
-                    <p><b>4. Lupa Password:</b> Silakan hubungi Admin melalui tombol WhatsApp di bawah form login.</p>
-                    <div class="mt-4 pt-3 border-t text-center text-xs text-brand-600 font-bold">
-                        Mappaguru Online &copy; 2026
-                    </div>
-                </div>
-                `,
+                title: 'Panduan Aplikasi',
+                html: `<div class="text-left text-sm text-slate-600">Gunakan menu dashboard untuk melihat ringkasan, input untuk mengisi data, riwayat untuk laporan, dan info guru untuk melihat profil Anda.</div>`,
                 icon: 'info',
-                confirmButtonText: 'Saya Mengerti',
                 confirmButtonColor: '#0ea5e9'
             });
         }
@@ -433,20 +601,35 @@
                 if(r.status=='sukses'){
                     user=r;
                     conf=await fetch(`${API_URL}?action=getConfig`).then(x=>x.json());
+                    
                     document.getElementById('pageLogin').classList.add('hidden');
                     document.getElementById('pageMain').classList.remove('hidden');
-                    document.getElementById('dSekolah').innerText=conf.sekolah;
-                    document.getElementById('dGuru').innerText=user.nama;
                     
+                    // ISI DATA HEADER DAN INFO GURU
+                    document.getElementById('dSekolah').innerText=conf.sekolah;
+                    
+                    // Request #1: Nama Guru di Header
+                    document.getElementById('headerNamaGuru').innerText=user.nama; 
+
+                    // Isi Data Profil Tab Info Guru (Request #2)
+                    document.getElementById('profNama').innerText = user.nama;
+                    document.getElementById('profNip').innerText = user.nip;
+                    document.getElementById('profSekolah').innerText = conf.sekolah;
+                    document.getElementById('profAlamat').innerText = user.alamat;
+                    document.getElementById('profInstansi').innerText = conf.instansi;
+
                     Swal.fire({
                         icon: 'success',
                         title: 'Selamat Datang!',
                         text: `Halo, ${user.nama}. Sistem siap digunakan.`,
-                        timer: 2000,
+                        timer: 1500,
                         showConfirmButton: false
                     });
                     
-                    switchTab('input');
+                    // Default ke Dashboard (Request #3)
+                    switchTab('dashboard');
+                    loadHistory(true); // Load data di background agar dashboard terisi
+
                 } else {
                     Swal.fire('Login Gagal', r.message, 'error');
                 }
@@ -466,8 +649,7 @@
                 showCancelButton: true,
                 confirmButtonColor: '#0284c7',
                 cancelButtonColor: '#cbd5e1',
-                confirmButtonText: 'Ya, Simpan!',
-                cancelButtonText: 'Batal'
+                confirmButtonText: 'Ya, Simpan!'
             });
 
             if (!result.isConfirmed) return;
@@ -482,7 +664,6 @@
                 await fetch(API_URL, {method:'POST', body:JSON.stringify(d)});
                 Swal.fire('Berhasil!', 'Data jurnal telah disimpan.', 'success');
                 resetForm();
-                // Refresh history tapi jangan pindah tab paksa biar user bisa input lagi kalau mau
                 loadHistory(); 
             } catch(x){
                 Swal.fire('Gagal', 'Terjadi kesalahan saat menyimpan.', 'error');
@@ -490,18 +671,27 @@
             loading(false);
         }
 
-        async function loadHistory(){
-            loading(true);
+        async function loadHistory(silent = false){
+            if(!silent) loading(true);
             try {
                 let r=await fetch(`${API_URL}?action=getHistory&nip=${user.nip}`).then(x=>x.json());
                 historyData = r.data;
-                filteredData = historyData; // Awalnya filtered sama dengan semua data
-                currentPage = 1; // Reset ke halaman 1
-                renderPagination();
+                filteredData = historyData; 
+                currentPage = 1; 
+                
+                // Jika sedang di tab riwayat, render tabel
+                if(!document.getElementById('viewHistory').classList.contains('hidden')){
+                    renderPagination();
+                }
+                // Jika sedang di dashboard, update chart/angka
+                if(!document.getElementById('viewDashboard').classList.contains('hidden')){
+                    updateDashboard();
+                }
+
             } catch(e){
                 console.error(e);
             }
-            loading(false);
+            if(!silent) loading(false);
         }
 
         // --- FUNGSI PAGINASI & FILTER ---
@@ -551,7 +741,6 @@
             // Render Items
             let html = "";
             pageItems.forEach((d, index) => {
-                // index asli di historyData untuk fungsi edit/delete
                 let realIndex = historyData.indexOf(d); 
 
                 html += `
