@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jurnal Digital BK - Mappaguru Online</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
@@ -14,28 +14,49 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-                    colors: { brand: { 50:'#eff6ff', 600:'#2563eb', 700:'#1d4ed8', 900:'#1e3a8a' } }
+                    colors: { 
+                        brand: { 50:'#f0f9ff', 100:'#e0f2fe', 500:'#0ea5e9', 600:'#0284c7', 700:'#0369a1', 900:'#0c4a6e' },
+                        slate: { 850: '#1e293b' } 
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'glow': '0 0 15px rgba(14, 165, 233, 0.3)'
+                    }
                 }
             }
         }
     </script>
 
     <style>
-        /* CSS LAYAR UTAMA */
-        body { background-color: #f8fafc; color: #334155; }
+        /* BASE STYLES */
+        body { background-color: #f1f5f9; color: #334155; -webkit-font-smoothing: antialiased; }
         .hidden { display: none !important; }
         
-        /* Loading & Modal */
-        .loader { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px); }
-        .spin { width: 50px; height: 50px; border: 4px solid #e2e8f0; border-top-color: #2563eb; border-radius: 50%; animation: s 0.8s ease-in-out infinite; }
-        @keyframes s { to { transform: rotate(360deg); } }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; justify-content: center; align-items: center; padding: 10px; backdrop-filter: blur(2px); }
-        .modal-box { background: white; width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); animation: popUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
-        @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
-        .tab-btn { padding: 12px; cursor: pointer; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent; flex: 1; text-align: center; transition: 0.3s; }
-        .tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; background: white; }
+        /* LOADING & ANIMATIONS */
+        .loader { position: fixed; inset: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(8px); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .spin { width: 45px; height: 45px; border: 4px solid #e2e8f0; border-top-color: #0284c7; border-radius: 50%; animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); z-index: 100; display: flex; justify-content: center; align-items: center; padding: 15px; backdrop-filter: blur(3px); transition: all 0.3s; }
+        .modal-box { background: white; width: 100%; max-width: 750px; max-height: 90vh; overflow-y: auto; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: scale(0.95); opacity: 0; animation: modalIn 0.3s forwards; }
+        @keyframes modalIn { to { transform: scale(1); opacity: 1; } }
+
+        /* TAB NAVIGATION */
+        .nav-pill { cursor: pointer; padding: 12px 20px; font-weight: 600; color: #64748b; border-radius: 12px; transition: all 0.3s; display: flex; align-items: center; gap: 8px; justify-content: center; }
+        .nav-pill:hover { background-color: #f1f5f9; color: #0f172a; }
+        .nav-pill.active { background-color: #0284c7; color: white; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }
+
+        /* CARD STYLES */
+        .glass-panel { background: white; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .input-field { width: 100%; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 10px; transition: 0.2s; font-size: 14px; }
+        .input-field:focus { border-color: #0ea5e9; outline: none; ring: 3px; --tw-ring-color: rgba(14, 165, 233, 0.2); }
 
         /* --- CSS KHUSUS CETAK PDF --- */
         @media print {
@@ -54,28 +75,10 @@
             }
 
             .tbl-pdf { width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 20px; }
-            .tbl-pdf td { 
-                border: 1px solid #000; 
-                padding: 6px 10px; 
-                vertical-align: top; 
-                line-height: 1.4;
-            }
-            .col-label { 
-                width: 28%; 
-                font-weight: bold; 
-                background-color: #f0f0f0 !important; 
-                -webkit-print-color-adjust: exact; 
-            }
+            .tbl-pdf td { border: 1px solid #000; padding: 6px 10px; vertical-align: top; line-height: 1.4; }
+            .col-label { width: 28%; font-weight: bold; background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; }
             
-            /* CSS KOP SURAT DENGAN LOGO */
-            .kop-container {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                border-bottom: 3px double black;
-                padding-bottom: 15px;
-                margin-bottom: 25px;
-            }
+            .kop-container { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px double black; padding-bottom: 15px; margin-bottom: 25px; }
             .kop-logo { width: 90px; height: 90px; object-fit: contain; }
             .kop-text { text-align: center; flex: 1; padding: 0 10px; }
             
@@ -89,149 +92,230 @@
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="antialiased selection:bg-brand-100 selection:text-brand-900">
 
     <div id="loading" class="loader hidden">
-        <div class="spin mb-3"></div>
-        <p class="font-bold text-gray-600 animate-pulse">Memproses Data...</p>
+        <div class="spin mb-4"></div>
+        <p class="font-bold text-slate-600 animate-pulse tracking-wide">MEMPROSES DATA...</p>
     </div>
 
     <div id="modalView" class="modal-overlay hidden">
         <div class="modal-box">
-            <div class="bg-brand-900 text-white p-4 flex justify-between items-center sticky top-0 z-10">
-                <h3 class="font-bold text-lg"><i class="fas fa-file-alt mr-2"></i> Detail Jurnal Lengkap</h3>
-                <button onclick="closeModal()" class="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            <div class="bg-gradient-to-r from-brand-900 to-brand-700 text-white p-5 flex justify-between items-center sticky top-0 z-10">
+                <h3 class="font-bold text-lg flex items-center gap-3"><i class="fa-solid fa-file-contract"></i> Detail Jurnal Lengkap</h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/30 flex items-center justify-center transition"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-6 space-y-4" id="modalContent"></div>
-            <div class="bg-gray-100 p-4 text-right">
-                <button onclick="closeModal()" class="bg-gray-500 text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-gray-600">Tutup</button>
+            <div class="p-6 md:p-8 space-y-6" id="modalContent"></div>
+            <div class="bg-slate-50 p-5 text-right border-t">
+                <button onclick="closeModal()" class="bg-white border border-slate-300 text-slate-700 px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-100 shadow-sm transition">Tutup Detail</button>
             </div>
         </div>
     </div>
 
-    <div id="pageLogin" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-blue-100">
-        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm border border-white/50">
-            <div class="text-center mb-6">
-                <img src="https://lh3.googleusercontent.com/d/1MGchP5nPXQGHbkCjwUEdck8xN-c4Whyg" class="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-md">
+    <div id="pageLogin" class="min-h-screen flex items-center justify-center p-4 bg-[url('https://source.unsplash.com/random/1920x1080/?office,desk')] bg-cover bg-center">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+        <div class="bg-white/90 backdrop-blur-xl p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-white/50 relative z-10 transform hover:scale-[1.01] transition duration-500">
+            <div class="text-center mb-8">
+                <img src="https://drive.google.com/uc?export=view&id=1MGchP5nPXQGHbkCjwUEdck8xN-c4Whyg" class="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-lg filter hover:brightness-110 transition">
                 
-                <h2 class="text-2xl font-bold text-gray-800">JURNAL BK</h2>
-                <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Mappaguru Online</p>
+                <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">JURNAL BK</h2>
+                <p class="text-xs font-semibold text-brand-600 uppercase tracking-[0.2em] mt-2">Mappaguru Online</p>
             </div>
-            <form onsubmit="doLogin(event)" class="space-y-4">
-                <div>
-                    <label class="text-xs font-bold text-gray-500 ml-1">USERNAME</label>
-                    <input id="u" type="text" class="w-full border-gray-200 bg-gray-50 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="NIP / User" required>
+            <form onsubmit="doLogin(event)" class="space-y-5">
+                <div class="group">
+                    <label class="text-[10px] font-bold text-slate-500 ml-1 mb-1 block uppercase">NIP / Username</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-400 group-focus-within:text-brand-600 transition"></i>
+                        <input id="u" type="text" class="w-full bg-slate-50 border border-slate-200 pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition font-medium text-slate-700" placeholder="Masukkan Username" required>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-xs font-bold text-gray-500 ml-1">PASSWORD</label>
-                    <input id="p" type="password" class="w-full border-gray-200 bg-gray-50 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="Kata Sandi" required>
+                <div class="group">
+                    <label class="text-[10px] font-bold text-slate-500 ml-1 mb-1 block uppercase">Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-4 top-3.5 text-slate-400 group-focus-within:text-brand-600 transition"></i>
+                        <input id="p" type="password" class="w-full bg-slate-50 border border-slate-200 pl-10 pr-4 py-3 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition font-medium text-slate-700" placeholder="••••••••" required>
+                    </div>
                 </div>
-                <button class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 hover:shadow-lg transition transform hover:-translate-y-0.5">MASUK APLIKASI</button>
+                <button class="w-full bg-gradient-to-r from-brand-600 to-brand-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-500/30 hover:shadow-brand-500/50 hover:-translate-y-0.5 transition duration-300">
+                    MASUK APLIKASI <i class="fa-solid fa-arrow-right-to-bracket ml-2"></i>
+                </button>
             </form>
-            <div class="mt-8 text-center text-[10px] text-gray-400">
-                Created by Muhammad Hasratul
+            <div class="mt-8 pt-6 border-t border-slate-200 text-center">
+                <p class="text-[10px] text-slate-400">Developed by <span class="font-bold text-slate-600">Muhammad Hasratul</span></p>
             </div>
         </div>
     </div>
 
-    <div id="pageMain" class="hidden min-h-screen bg-gray-50 flex flex-col">
-        <header class="bg-white shadow-sm sticky top-0 z-40">
-            <div class="max-w-5xl mx-auto flex justify-between items-center p-4">
-                <div>
-                    <div class="text-[10px] font-bold text-blue-600 uppercase tracking-wide" id="headerDate">SENIN, 1 JANUARI 2026</div>
-                    <div class="font-bold text-lg text-gray-800 leading-tight truncate max-w-[200px] md:max-w-md" id="dSekolah">Loading...</div>
-                    <div class="text-xs text-gray-500">Guru: <span id="dGuru" class="font-bold text-black"></span></div>
+    <div id="pageMain" class="hidden min-h-screen flex flex-col">
+        
+        <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 border-b border-slate-200 shadow-sm">
+            <div class="max-w-6xl mx-auto px-4 py-3">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-4 w-full md:w-auto">
+                        <div class="bg-gradient-to-br from-brand-500 to-brand-700 w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] font-bold text-brand-600 uppercase tracking-wide" id="headerDate">...</div>
+                            <div class="font-bold text-lg text-slate-800 leading-tight" id="dSekolah">Loading...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                        <div class="hidden md:block text-right mr-2">
+                            <div class="text-xs text-slate-400">Logged in as</div>
+                            <div class="font-bold text-sm text-slate-700" id="dGuru">...</div>
+                        </div>
+                        <button onclick="logout()" class="text-xs bg-red-50 text-red-600 border border-red-100 px-4 py-2.5 rounded-full hover:bg-red-600 hover:text-white font-bold transition flex items-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-power-off"></i> Keluar
+                        </button>
+                    </div>
                 </div>
-                <button onclick="logout()" class="text-xs bg-red-50 text-red-600 border border-red-200 px-4 py-2 rounded-full hover:bg-red-600 hover:text-white font-bold transition flex items-center gap-2">
-                    <i class="fas fa-power-off"></i> <span class="hidden md:inline">Keluar</span>
-                </button>
-            </div>
-            <div class="max-w-5xl mx-auto flex border-t bg-white">
-                <div onclick="switchTab('input')" id="tab1" class="tab-btn active"><i class="fas fa-edit mr-2"></i> INPUT</div>
-                <div onclick="switchTab('history')" id="tab2" class="tab-btn"><i class="fas fa-list mr-2"></i> RIWAYAT</div>
             </div>
         </header>
 
-        <div class="max-w-5xl mx-auto w-full px-4 py-6 flex-grow">
+        <div class="bg-white border-b border-slate-200 sticky top-[73px] md:top-[65px] z-30">
+            <div class="max-w-6xl mx-auto px-4 py-2 flex gap-2 overflow-x-auto">
+                <div onclick="switchTab('input')" id="tab1" class="nav-pill active flex-1 md:flex-none md:w-40">
+                    <i class="fa-regular fa-pen-to-square"></i> INPUT
+                </div>
+                <div onclick="switchTab('history')" id="tab2" class="nav-pill flex-1 md:flex-none md:w-40">
+                    <i class="fa-solid fa-clock-rotate-left"></i> RIWAYAT
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto w-full px-4 py-8 flex-grow">
             
-            <div id="viewInput">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <div class="flex justify-between items-center mb-6 border-b pb-4">
-                        <h3 class="font-bold text-xl text-gray-800" id="formTitle">Input Kegiatan</h3>
-                        <button onclick="resetForm()" id="btnCancel" class="hidden text-red-500 text-xs font-bold uppercase border border-red-200 px-3 py-1 rounded hover:bg-red-50">Batal</button>
+            <div id="viewInput" class="animate-fade-in-up">
+                <div class="glass-panel p-6 md:p-8">
+                    <div class="flex justify-between items-center mb-8 pb-4 border-b border-slate-100">
+                        <div>
+                            <h3 class="font-bold text-2xl text-slate-800" id="formTitle">Formulir Kegiatan</h3>
+                            <p class="text-sm text-slate-400 mt-1">Isi data layanan bimbingan konseling dengan lengkap</p>
+                        </div>
+                        <button onclick="resetForm()" id="btnCancel" class="hidden text-red-500 text-xs font-bold uppercase border border-red-200 bg-red-50 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition">
+                            <i class="fa-solid fa-ban mr-1"></i> Batal Edit
+                        </button>
                     </div>
 
-                    <form id="formJurnal" onsubmit="submitData(event)" class="space-y-5">
+                    <form id="formJurnal" onsubmit="submitData(event)" class="space-y-6">
                         <input type="hidden" name="id" id="inputId">
                         
-                        <div class="grid md:grid-cols-2 gap-5">
+                        <div class="grid md:grid-cols-12 gap-6">
+                            <div class="md:col-span-4">
+                                <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Tanggal Kegiatan</label>
+                                <input type="date" name="tanggal" required class="input-field bg-brand-50/50 border-brand-200">
+                            </div>
+                            <div class="md:col-span-4">
+                                <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Jam Ke-</label>
+                                <div class="relative">
+                                    <i class="fa-regular fa-clock absolute left-3 top-3 text-slate-400"></i>
+                                    <input type="text" name="jam" placeholder="Cth: 1-2" class="input-field pl-9">
+                                </div>
+                            </div>
+                            <div class="md:col-span-4">
+                                <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Durasi (Menit)</label>
+                                <input type="text" name="waktu" placeholder="Cth: 40 Menit" class="input-field">
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
                             <div>
-                                <label class="text-xs font-bold text-gray-500 block mb-1">TANGGAL KEGIATAN</label>
-                                <input type="date" name="tanggal" required class="w-full border p-3 rounded-lg bg-blue-50 focus:bg-white focus:ring-2 focus:ring-blue-300 outline-none">
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div><label class="text-xs font-bold text-gray-500 block mb-1">JAM KE-</label><input type="text" name="jam" placeholder="1-2" class="w-full border p-3 rounded-lg"></div>
-                                <div><label class="text-xs font-bold text-gray-500 block mb-1">DURASI</label><input type="text" name="waktu" placeholder="40 Mnt" class="w-full border p-3 rounded-lg"></div>
-                            </div>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-5">
-                            <div><label class="text-xs font-bold text-gray-500 block mb-1">SASARAN</label><input type="text" name="sasaran" placeholder="Siswa/Guru" required class="w-full border p-3 rounded-lg"></div>
-                            <div><label class="text-xs font-bold text-gray-500 block mb-1">KELAS</label><input type="text" name="kelas" placeholder="Cth: IX A" class="w-full border p-3 rounded-lg"></div>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-5">
-                            <div>
-                                <label class="text-xs font-bold text-gray-500 block mb-1">BIDANG</label>
-                                <select name="bidang" class="w-full border p-3 rounded-lg bg-white"><option>Pribadi</option><option>Sosial</option><option>Belajar</option><option>Karir</option></select>
+                                <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Sasaran Layanan</label>
+                                <div class="relative">
+                                    <i class="fa-solid fa-users absolute left-3 top-3 text-slate-400"></i>
+                                    <input type="text" name="sasaran" placeholder="Siswa / Guru / Ortu" required class="input-field pl-9">
+                                </div>
                             </div>
                             <div>
-                                <label class="text-xs font-bold text-gray-500 block mb-1">JENIS LAYANAN</label>
-                                <input type="text" name="jenis" list="ls" class="w-full border p-3 rounded-lg" placeholder="Pilih/Ketik...">
-                                <datalist id="ls"><option value="Konseling Individu"><option value="Bimbingan Kelompok"><option value="Bimbingan Klasikal"><option value="Konsultasi"></datalist>
+                                <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Kelas / Status</label>
+                                <input type="text" name="kelas" placeholder="Cth: IX A" class="input-field">
                             </div>
                         </div>
 
-                        <div><label class="text-xs font-bold text-gray-500 block mb-1">TOPIK / MASALAH</label><input type="text" name="topik" class="w-full border p-3 rounded-lg font-medium"></div>
-
-                        <div class="grid md:grid-cols-2 gap-5">
-                            <div><label class="text-xs font-bold text-gray-500 block mb-1">TUJUAN</label><textarea name="tujuan" rows="2" class="w-full border p-3 rounded-lg"></textarea></div>
-                            <div><label class="text-xs font-bold text-gray-500 block mb-1">MEDIA / ALAT</label><input type="text" name="media" class="w-full border p-3 rounded-lg"></textarea></div>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Bidang Bimbingan</label>
+                                <select name="bidang" class="input-field bg-white">
+                                    <option>Pribadi</option>
+                                    <option>Sosial</option>
+                                    <option>Belajar</option>
+                                    <option>Karir</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Jenis Layanan</label>
+                                <input type="text" name="jenis" list="ls" class="input-field" placeholder="Pilih atau Ketik...">
+                                <datalist id="ls"><option value="Konseling Individu"><option value="Bimbingan Kelompok"><option value="Bimbingan Klasikal"><option value="Konsultasi"><option value="Alih Tangan Kasus"></datalist>
+                            </div>
                         </div>
 
-                        <div><label class="text-xs font-bold text-gray-500 block mb-1">RINGKASAN PROSES</label><textarea name="ringkasan" rows="3" class="w-full border p-3 rounded-lg"></textarea></div>
-
-                        <div class="grid md:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border">
-                            <div><label class="text-[10px] font-bold text-gray-400 block mb-1">EVALUASI</label><textarea name="evaluasi" rows="2" class="w-full border p-2 rounded bg-white text-sm"></textarea></div>
-                            <div><label class="text-[10px] font-bold text-gray-400 block mb-1">TINDAK LANJUT</label><textarea name="tindaklanjut" rows="2" class="w-full border p-2 rounded bg-white text-sm"></textarea></div>
-                            <div><label class="text-[10px] font-bold text-gray-400 block mb-1">CATATAN KHUSUS</label><textarea name="catatan" rows="2" class="w-full border p-2 rounded bg-white text-sm"></textarea></div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Topik / Masalah</label>
+                            <input type="text" name="topik" class="input-field font-semibold text-slate-700 bg-slate-50" placeholder="Inti kegiatan layanan...">
                         </div>
 
-                        <button id="btnSimpan" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-blue-700 transition flex justify-center items-center gap-2">
-                            <i class="fas fa-save"></i> SIMPAN JURNAL
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div><label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Tujuan</label><textarea name="tujuan" rows="2" class="input-field"></textarea></div>
+                            <div><label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Media / Alat</label><input type="text" name="media" class="input-field"></div>
+                        </div>
+
+                        <div><label class="text-xs font-bold text-slate-500 block mb-2 uppercase">Ringkasan Proses</label><textarea name="ringkasan" rows="3" class="input-field"></textarea></div>
+
+                        <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 grid md:grid-cols-3 gap-5">
+                            <div><label class="text-[10px] font-bold text-slate-400 block mb-2 uppercase">Evaluasi</label><textarea name="evaluasi" rows="2" class="input-field bg-white text-sm"></textarea></div>
+                            <div><label class="text-[10px] font-bold text-slate-400 block mb-2 uppercase">Tindak Lanjut</label><textarea name="tindaklanjut" rows="2" class="input-field bg-white text-sm"></textarea></div>
+                            <div><label class="text-[10px] font-bold text-slate-400 block mb-2 uppercase">Catatan Khusus</label><textarea name="catatan" rows="2" class="input-field bg-white text-sm"></textarea></div>
+                        </div>
+
+                        <button id="btnSimpan" class="w-full bg-brand-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-brand-500/30 hover:bg-brand-700 hover:-translate-y-1 transition transform duration-200 flex justify-center items-center gap-2 text-base">
+                            <i class="fa-solid fa-floppy-disk"></i> SIMPAN JURNAL KEGIATAN
                         </button>
                     </form>
                 </div>
             </div>
 
-            <div id="viewHistory" class="hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-gray-700 text-lg">Data Tersimpan</h3>
-                    <button onclick="loadHistory()" class="text-blue-600 text-sm font-bold bg-white px-3 py-1 rounded border hover:bg-blue-50"><i class="fas fa-sync"></i> Refresh</button>
+            <div id="viewHistory" class="hidden animate-fade-in-up">
+                
+                <div class="glass-panel p-4 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-3 w-full md:w-auto">
+                        <span class="text-sm font-bold text-slate-600">Tampilkan:</span>
+                        <select id="rowsPerPage" onchange="changeRows()" class="border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="5">5 Baris</option>
+                            <option value="10">10 Baris</option>
+                            <option value="20">20 Baris</option>
+                            <option value="1000">Semua</option>
+                        </select>
+                    </div>
+
+                    <div class="w-full md:w-1/3 relative">
+                         <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400 text-sm"></i>
+                         <input type="text" id="searchInput" onkeyup="filterData()" placeholder="Cari topik, sasaran..." class="w-full border border-slate-300 rounded-lg pl-9 pr-4 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
+
+                    <button onclick="loadHistory()" class="bg-slate-100 text-slate-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i> Refresh
+                    </button>
                 </div>
+
                 <div id="listContainer" class="space-y-4"></div>
+
+                <div id="paginationControls" class="flex justify-center items-center gap-4 mt-8">
+                    </div>
             </div>
 
         </div>
 
-        <footer class="text-center text-xs text-gray-400 py-6 mt-auto border-t bg-white">
-            <p>Pengembang: <b>Muhammad Hasratul</b> - Mappaguru Online &copy; 2026</p>
+        <footer class="text-center text-xs text-slate-400 py-8 mt-auto border-t bg-white">
+            <p class="mb-1">Platform Aplikasi Bimbingan Konseling Sekolah</p>
+            <p class="font-bold text-slate-600">Pengembang: Muhammad Hasratul - Mappaguru Online &copy; 2026</p>
         </footer>
     </div>
 
     <div id="printArea" class="hidden">
         <div class="kop-container">
-            <img src="https://lh3.googleusercontent.com/d/1paUgNvlMQWsPkT3ccnQ16umwrOxZ7y_i" class="kop-logo">
+            <img src="https://drive.google.com/uc?export=view&id=1paUgNvlMQWsPkT3ccnQ16umwrOxZ7y_i" class="kop-logo">
             
             <div class="kop-text">
                 <div class="k1" id="p_pem"></div>
@@ -241,7 +325,7 @@
                 <div class="k3" id="p_almt"></div>
             </div>
             
-            <img src="https://lh3.googleusercontent.com/d/1MGchP5nPXQGHbkCjwUEdck8xN-c4Whyg" class="kop-logo">
+            <img src="https://drive.google.com/uc?export=view&id=1MGchP5nPXQGHbkCjwUEdck8xN-c4Whyg" class="kop-logo">
         </div>
 
         <div class="judul-pdf" id="p_judul" style="text-align:center; font-weight:bold; text-decoration:underline; font-size:12pt; margin-top:15px; text-transform:uppercase;">LAPORAN PELAKSANAAN LAYANAN BIMBINGAN DAN KONSELING</div>
@@ -281,6 +365,11 @@
         const API_URL = "https://script.google.com/macros/s/AKfycbxMbp7LlrCgbwoAIB_xCtrHCTpRI9s2zKT7BhH7E-d2qOnP2O8AzO4vxjl-EsaDMTwGog/exec"; 
 
         let user=null, conf=null, historyData=[];
+        
+        // --- VARIABEL PAGINASI ---
+        let currentPage = 1;
+        let rowsPerPage = 5;
+        let filteredData = [];
 
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         document.getElementById('headerDate').innerText = new Date().toLocaleDateString('id-ID', options).toUpperCase();
@@ -296,7 +385,7 @@
             } else {
                 document.getElementById('viewHistory').classList.remove('hidden');
                 document.getElementById('tab2').classList.add('active');
-                loadHistory();
+                if(historyData.length == 0) loadHistory();
             }
         }
 
@@ -316,7 +405,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Selamat Datang!',
-                        text: `Halo, ${user.nama}. Selamat bekerja!`,
+                        text: `Halo, ${user.nama}. Sistem siap digunakan.`,
                         timer: 2000,
                         showConfirmButton: false
                     });
@@ -336,11 +425,11 @@
             
             const result = await Swal.fire({
                 title: 'Simpan Jurnal?',
-                text: "Pastikan data sudah benar",
+                text: "Pastikan data sudah benar sebelum disimpan.",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
+                confirmButtonColor: '#0284c7',
+                cancelButtonColor: '#cbd5e1',
                 confirmButtonText: 'Ya, Simpan!',
                 cancelButtonText: 'Batal'
             });
@@ -357,7 +446,8 @@
                 await fetch(API_URL, {method:'POST', body:JSON.stringify(d)});
                 Swal.fire('Berhasil!', 'Data jurnal telah disimpan.', 'success');
                 resetForm();
-                switchTab('history');
+                // Refresh history tapi jangan pindah tab paksa biar user bisa input lagi kalau mau
+                loadHistory(); 
             } catch(x){
                 Swal.fire('Gagal', 'Terjadi kesalahan saat menyimpan.', 'error');
             }
@@ -365,85 +455,170 @@
         }
 
         async function loadHistory(){
+            loading(true);
             try {
                 let r=await fetch(`${API_URL}?action=getHistory&nip=${user.nip}`).then(x=>x.json());
-                historyData=r.data;
-                let h="";
-                if(historyData.length==0) h=`<div class="text-center p-8 bg-white border rounded-xl text-gray-400">Belum ada data jurnal.</div>`;
-                
-                historyData.forEach((d,i)=>{
-                    h+=`
-                    <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition">
-                        <div class="flex flex-col md:flex-row justify-between mb-3 gap-2">
-                            <div>
-                                <div class="font-bold text-lg text-gray-800">${d.topik}</div>
-                                <div class="text-xs text-blue-600 font-bold bg-blue-50 inline-block px-2 py-0.5 rounded mt-1">${d.jenis}</div>
+                historyData = r.data;
+                filteredData = historyData; // Awalnya filtered sama dengan semua data
+                currentPage = 1; // Reset ke halaman 1
+                renderPagination();
+            } catch(e){
+                console.error(e);
+            }
+            loading(false);
+        }
+
+        // --- FUNGSI PAGINASI & FILTER ---
+        function changeRows() {
+            rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
+            currentPage = 1;
+            renderPagination();
+        }
+
+        function filterData() {
+            let k = document.getElementById('searchInput').value.toLowerCase();
+            filteredData = historyData.filter(item => 
+                item.topik.toLowerCase().includes(k) || 
+                item.sasaran.toLowerCase().includes(k) ||
+                item.kelas.toLowerCase().includes(k)
+            );
+            currentPage = 1;
+            renderPagination();
+        }
+
+        function changePage(delta) {
+            let maxPage = Math.ceil(filteredData.length / rowsPerPage);
+            let newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= maxPage) {
+                currentPage = newPage;
+                renderPagination();
+            }
+        }
+
+        function renderPagination() {
+            const listEl = document.getElementById('listContainer');
+            const ctrlEl = document.getElementById('paginationControls');
+            listEl.innerHTML = "";
+            ctrlEl.innerHTML = "";
+
+            if(filteredData.length === 0) {
+                listEl.innerHTML = `<div class="text-center p-12 bg-white border border-dashed border-slate-300 rounded-xl text-slate-400">
+                    <i class="fa-regular fa-folder-open text-4xl mb-3"></i><br>Tidak ada data ditemukan.</div>`;
+                return;
+            }
+
+            // Slice Logic
+            let start = (currentPage - 1) * rowsPerPage;
+            let end = start + rowsPerPage;
+            let pageItems = filteredData.slice(start, end);
+
+            // Render Items
+            let html = "";
+            pageItems.forEach((d, index) => {
+                // index asli di historyData untuk fungsi edit/delete
+                let realIndex = historyData.indexOf(d); 
+
+                html += `
+                <div class="glass-panel p-5 hover:shadow-lg transition duration-200 group border-l-4 border-l-brand-500">
+                    <div class="flex flex-col md:flex-row justify-between mb-3 gap-2">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-lg text-slate-800 leading-snug group-hover:text-brand-600 transition">${d.topik}</h4>
+                            <div class="flex items-center gap-2 mt-2">
+                                <span class="text-[10px] font-bold text-white bg-brand-500 px-2 py-0.5 rounded shadow-sm uppercase tracking-wide">${d.jenis}</span>
+                                <span class="text-xs text-slate-500"><i class="fa-solid fa-layer-group text-slate-400 mr-1"></i> ${d.bidang}</span>
                             </div>
-                            <div class="text-left md:text-right">
-                                <div class="text-sm font-bold text-gray-500"><i class="far fa-calendar-alt mr-1"></i> ${d.tanggal.substring(0,10)}</div>
-                                <div class="text-xs text-gray-400">Jam: ${d.jam}</div>
+                        </div>
+                        <div class="text-left md:text-right min-w-[120px]">
+                            <div class="text-sm font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-lg inline-block">
+                                <i class="fa-regular fa-calendar mr-2 text-brand-500"></i>${d.tanggal.substring(0,10)}
                             </div>
+                            <div class="text-xs text-slate-400 mt-1 pl-1">Jam: ${d.jam} (${d.waktu})</div>
                         </div>
-                        <div class="text-sm text-gray-600 mb-4 border-l-4 border-gray-200 pl-3">
-                             Sasaran: <b>${d.sasaran}</b> | Kelas: <b>${d.kelas}</b>
-                        </div>
-                        <div class="grid grid-cols-4 gap-2 pt-2 border-t">
-                            <button onclick="viewItem(${i})" class="bg-gray-100 text-gray-600 py-2 rounded text-xs font-bold hover:bg-gray-200"><i class="fas fa-eye"></i> <span class="hidden md:inline">LIHAT</span></button>
-                            <button onclick="editItem(${i})" class="bg-yellow-50 text-yellow-600 py-2 rounded text-xs font-bold hover:bg-yellow-100"><i class="fas fa-edit"></i> <span class="hidden md:inline">EDIT</span></button>
-                            <button onclick="printItem(${i})" class="bg-green-50 text-green-600 py-2 rounded text-xs font-bold hover:bg-green-100"><i class="fas fa-print"></i> <span class="hidden md:inline">PDF</span></button>
-                            <button onclick="deleteItem('${d.id}')" class="bg-red-50 text-red-500 py-2 rounded text-xs font-bold hover:bg-red-100"><i class="fas fa-trash"></i> <span class="hidden md:inline">HAPUS</span></button>
-                        </div>
-                    </div>`;
-                });
-                document.getElementById('listContainer').innerHTML=h;
-            } catch(e){}
+                    </div>
+                    
+                    <div class="text-sm text-slate-600 mb-4 pl-1 border-t border-slate-100 pt-2 mt-2 flex items-center gap-3">
+                        <span><i class="fa-solid fa-user-tag text-slate-400 mr-1"></i> ${d.sasaran}</span>
+                        <span class="text-slate-300">|</span>
+                        <span><i class="fa-solid fa-chalkboard-user text-slate-400 mr-1"></i> Kelas <b>${d.kelas}</b></span>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-3">
+                        <button onclick="viewItem(${realIndex})" class="col-span-1 bg-white border border-slate-200 text-slate-600 py-2 rounded-lg text-xs font-bold hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 transition flex items-center justify-center gap-2">
+                            <i class="fa-regular fa-eye"></i> <span class="hidden md:inline">LIHAT</span>
+                        </button>
+                        <button onclick="editItem(${realIndex})" class="col-span-1 bg-white border border-slate-200 text-slate-600 py-2 rounded-lg text-xs font-bold hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-200 transition flex items-center justify-center gap-2">
+                            <i class="fa-regular fa-pen-to-square"></i> <span class="hidden md:inline">UBAH</span>
+                        </button>
+                        <button onclick="printItem(${realIndex})" class="col-span-1 bg-white border border-slate-200 text-slate-600 py-2 rounded-lg text-xs font-bold hover:bg-green-50 hover:text-green-600 hover:border-green-200 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-print"></i> <span class="hidden md:inline">PDF</span>
+                        </button>
+                        <button onclick="deleteItem('${d.id}')" class="col-span-1 bg-white border border-slate-200 text-slate-600 py-2 rounded-lg text-xs font-bold hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition flex items-center justify-center gap-2">
+                            <i class="fa-regular fa-trash-can"></i> <span class="hidden md:inline">HAPUS</span>
+                        </button>
+                    </div>
+                </div>`;
+            });
+            listEl.innerHTML = html;
+
+            // Render Controls
+            let maxPage = Math.ceil(filteredData.length / rowsPerPage);
+            ctrlEl.innerHTML = `
+                <button onclick="changePage(-1)" ${currentPage===1 ? 'disabled' : ''} class="w-10 h-10 rounded-full flex items-center justify-center border border-slate-300 text-slate-600 hover:bg-brand-500 hover:text-white hover:border-brand-500 disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-slate-600 transition">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <span class="text-sm font-bold text-slate-600">Hal ${currentPage} dari ${maxPage}</span>
+                <button onclick="changePage(1)" ${currentPage===maxPage ? 'disabled' : ''} class="w-10 h-10 rounded-full flex items-center justify-center border border-slate-300 text-slate-600 hover:bg-brand-500 hover:text-white hover:border-brand-500 disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-slate-600 transition">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            `;
         }
 
         function viewItem(i){
             let d=historyData[i];
             let html=`
-                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-4 grid grid-cols-2 gap-y-2 text-sm">
-                    <div><span class="text-xs font-bold text-gray-400 block">TANGGAL</span><span class="font-bold text-gray-800">${d.tanggal.substring(0,10)}</span></div>
-                    <div><span class="text-xs font-bold text-gray-400 block">WAKTU</span><span class="font-bold text-gray-800">${d.jam} (${d.waktu})</span></div>
-                    <div><span class="text-xs font-bold text-gray-400 block">SASARAN</span><span class="font-bold text-gray-800">${d.sasaran} (${d.kelas})</span></div>
-                    <div><span class="text-xs font-bold text-gray-400 block">LAYANAN</span><span class="font-bold text-gray-800">${d.jenis}</span></div>
-                    <div class="col-span-2"><span class="text-xs font-bold text-gray-400 block">BIDANG</span><span class="font-bold text-gray-800">${d.bidang}</span></div>
+                <div class="bg-brand-50 p-5 rounded-xl border border-brand-100 grid grid-cols-2 gap-y-4 text-sm relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-24 h-24 bg-brand-200 rounded-full -mr-10 -mt-10 opacity-20"></div>
+                    <div><span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wide">Tanggal</span><span class="font-bold text-slate-800 text-base">${d.tanggal.substring(0,10)}</span></div>
+                    <div><span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wide">Waktu</span><span class="font-bold text-slate-800 text-base">${d.jam} (${d.waktu})</span></div>
+                    <div><span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wide">Sasaran</span><span class="font-bold text-slate-800 text-base">${d.sasaran} (${d.kelas})</span></div>
+                    <div><span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wide">Layanan</span><span class="font-bold text-slate-800 text-base">${d.jenis}</span></div>
+                    <div class="col-span-2"><span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wide">Bidang Bimbingan</span><span class="font-bold text-brand-600">${d.bidang}</span></div>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-5">
                     <div>
-                        <h4 class="text-xs font-bold text-gray-400 uppercase mb-1">Topik / Masalah</h4>
-                        <div class="p-3 bg-white border rounded text-gray-700 font-medium">${d.topik}</div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase mb-2 flex items-center gap-2"><i class="fa-solid fa-heading"></i> Topik / Masalah</h4>
+                        <div class="p-4 bg-white border border-slate-200 rounded-xl text-slate-700 font-semibold shadow-sm">${d.topik}</div>
                     </div>
                     
-                    <div class="grid md:grid-cols-2 gap-4">
+                    <div class="grid md:grid-cols-2 gap-5">
                         <div>
-                            <h4 class="text-xs font-bold text-gray-400 uppercase mb-1">Tujuan Layanan</h4>
-                            <div class="p-3 bg-white border rounded text-gray-600 text-sm h-full">${d.tujuan || '-'}</div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Tujuan Layanan</h4>
+                            <div class="p-4 bg-white border border-slate-200 rounded-xl text-slate-600 text-sm h-full shadow-sm">${d.tujuan || '-'}</div>
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-gray-400 uppercase mb-1">Media / Alat</h4>
-                            <div class="p-3 bg-white border rounded text-gray-600 text-sm h-full">${d.media || '-'}</div>
+                            <h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Media / Alat</h4>
+                            <div class="p-4 bg-white border border-slate-200 rounded-xl text-slate-600 text-sm h-full shadow-sm">${d.media || '-'}</div>
                         </div>
                     </div>
 
                     <div>
-                        <h4 class="text-xs font-bold text-gray-400 uppercase mb-1">Ringkasan Proses</h4>
-                        <div class="p-3 bg-white border rounded text-gray-600 text-sm leading-relaxed">${d.ringkasan || '-'}</div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Ringkasan Proses</h4>
+                        <div class="p-4 bg-white border border-slate-200 rounded-xl text-slate-600 text-sm leading-relaxed shadow-sm">${d.ringkasan || '-'}</div>
                     </div>
 
-                    <div class="grid md:grid-cols-3 gap-3">
-                         <div>
-                            <h4 class="text-[10px] font-bold text-gray-400 uppercase mb-1">Evaluasi</h4>
-                            <div class="p-2 bg-yellow-50 border border-yellow-100 rounded text-gray-600 text-xs">${d.evaluasi || '-'}</div>
+                    <div class="grid md:grid-cols-3 gap-4">
+                         <div class="bg-yellow-50 p-3 rounded-xl border border-yellow-100">
+                            <h4 class="text-[10px] font-bold text-yellow-600 uppercase mb-1">Evaluasi</h4>
+                            <div class="text-slate-600 text-xs">${d.evaluasi || '-'}</div>
                         </div>
-                        <div>
-                            <h4 class="text-[10px] font-bold text-gray-400 uppercase mb-1">Tindak Lanjut</h4>
-                            <div class="p-2 bg-green-50 border border-green-100 rounded text-gray-600 text-xs">${d.tindaklanjut || '-'}</div>
+                        <div class="bg-green-50 p-3 rounded-xl border border-green-100">
+                            <h4 class="text-[10px] font-bold text-green-600 uppercase mb-1">Tindak Lanjut</h4>
+                            <div class="text-slate-600 text-xs">${d.tindaklanjut || '-'}</div>
                         </div>
-                        <div>
-                            <h4 class="text-[10px] font-bold text-gray-400 uppercase mb-1">Catatan Khusus</h4>
-                            <div class="p-2 bg-gray-50 border border-gray-200 rounded text-gray-600 text-xs">${d.catatan || '-'}</div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-1">Catatan Khusus</h4>
+                            <div class="text-slate-600 text-xs">${d.catatan || '-'}</div>
                         </div>
                     </div>
                 </div>
@@ -464,9 +639,10 @@
             f.ringkasan.value=d.ringkasan; f.evaluasi.value=d.evaluasi;
             f.tindaklanjut.value=d.tindaklanjut; f.catatan.value=d.catatan;
             
-            document.getElementById('formTitle').innerText="Edit Jurnal";
-            document.getElementById('btnSimpan').innerHTML="<i class='fas fa-sync'></i> UPDATE DATA";
-            document.getElementById('btnSimpan').classList.replace('bg-blue-600','bg-orange-500');
+            document.getElementById('formTitle').innerText="Ubah Data Jurnal";
+            document.getElementById('btnSimpan').innerHTML="<i class='fa-solid fa-arrows-rotate'></i> PERBARUI DATA";
+            document.getElementById('btnSimpan').classList.remove('bg-brand-600', 'hover:bg-brand-700');
+            document.getElementById('btnSimpan').classList.add('bg-orange-500', 'hover:bg-orange-600');
             document.getElementById('btnCancel').classList.remove('hidden');
             window.scrollTo(0,0);
         }
@@ -474,20 +650,21 @@
         function resetForm(){
             document.getElementById('formJurnal').reset();
             document.getElementById('inputId').value="";
-            document.getElementById('formTitle').innerText="Input Kegiatan";
-            document.getElementById('btnSimpan').innerHTML="<i class='fas fa-save'></i> SIMPAN JURNAL";
-            document.getElementById('btnSimpan').classList.replace('bg-orange-500','bg-blue-600');
+            document.getElementById('formTitle').innerText="Formulir Kegiatan";
+            document.getElementById('btnSimpan').innerHTML="<i class='fa-solid fa-floppy-disk'></i> SIMPAN JURNAL KEGIATAN";
+            document.getElementById('btnSimpan').classList.remove('bg-orange-500', 'hover:bg-orange-600');
+            document.getElementById('btnSimpan').classList.add('bg-brand-600', 'hover:bg-brand-700');
             document.getElementById('btnCancel').classList.add('hidden');
         }
 
         async function deleteItem(id){
             const result = await Swal.fire({
-                title: 'Yakin hapus data?',
-                text: "Data tidak bisa dikembalikan!",
+                title: 'Hapus Permanen?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#cbd5e1',
                 confirmButtonText: 'Ya, Hapus!'
             });
 
@@ -535,13 +712,15 @@
         function logout(){
             Swal.fire({
                 title: 'Keluar Aplikasi?',
-                text: "Sesi Anda akan diakhiri.",
+                text: "Anda harus login ulang untuk masuk kembali.",
                 icon: 'question',
                 showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#cbd5e1',
                 confirmButtonText: 'Ya, Keluar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    Swal.fire('Sampai Jumpa!','','success').then(()=>location.reload());
+                    location.reload();
                 }
             });
         }
