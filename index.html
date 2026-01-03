@@ -79,7 +79,10 @@
             .col-label { width: 28%; font-weight: bold; background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; }
             
             .kop-container { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px double black; padding-bottom: 15px; margin-bottom: 25px; }
-            .kop-logo { width: 90px; height: 90px; object-fit: contain; }
+            
+            /* Logo Print dengan Mix Blend Mode Multiply agar background putih jadi transparan */
+            .kop-logo { width: 90px; height: 90px; object-fit: contain; mix-blend-mode: multiply; }
+            
             .kop-text { text-align: center; flex: 1; padding: 0 10px; }
             
             .k1 { font-size: 14pt; font-weight: bold; text-transform: uppercase; }
@@ -115,9 +118,13 @@
     <div id="pageLogin" class="min-h-screen flex items-center justify-center p-4 bg-[url('https://source.unsplash.com/random/1920x1080/?office,desk')] bg-cover bg-center">
         <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
         <div class="bg-white/90 backdrop-blur-xl p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-white/50 relative z-10 transform hover:scale-[1.01] transition duration-500">
+            
+            <button onclick="showAppInfo()" class="absolute top-4 right-4 text-slate-400 hover:text-brand-600 transition" title="Informasi Aplikasi">
+                <i class="fa-solid fa-circle-info text-2xl"></i>
+            </button>
+
             <div class="text-center mb-8">
-                
-                <img src="https://drive.google.com/thumbnail?id=131xxAOTTB931TitQdbe2NUeevLyN4BhM&sz=w250" class="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-lg filter hover:brightness-110 transition" alt="Logo Login">
+                <img src="https://drive.google.com/thumbnail?id=131xxAOTTB931TitQdbe2NUeevLyN4BhM&sz=w250" class="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-lg filter hover:brightness-110 transition mix-blend-multiply" alt="Logo Login">
                 
                 <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">JURNAL BK</h2>
                 <p class="text-xs font-semibold text-brand-600 uppercase tracking-[0.2em] mt-2">Mappaguru Online</p>
@@ -141,7 +148,14 @@
                     MASUK APLIKASI <i class="fa-solid fa-arrow-right-to-bracket ml-2"></i>
                 </button>
             </form>
-            <div class="mt-8 pt-6 border-t border-slate-200 text-center">
+            
+            <div class="mt-4 text-center">
+                <a href="https://wa.me/6285259259767?text=Halo%20Admin%2C%20saya%20lupa%20username%2Fpassword%20aplikasi%20Jurnal%20BK." target="_blank" class="text-xs text-slate-500 hover:text-brand-600 hover:underline transition flex justify-center items-center gap-1">
+                    <i class="fa-brands fa-whatsapp text-green-500"></i> Lupa Username/Password? Hubungi Admin
+                </a>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-slate-200 text-center">
                 <p class="text-[10px] text-slate-400">Developed by <span class="font-bold text-slate-600">Muhammad Hasratul</span></p>
             </div>
         </div>
@@ -388,6 +402,27 @@
                 document.getElementById('tab2').classList.add('active');
                 if(historyData.length == 0) loadHistory();
             }
+        }
+
+        // --- FUNGSI INFO APLIKASI (POPUP BARU) ---
+        function showAppInfo() {
+            Swal.fire({
+                title: 'Panduan Aplikasi Jurnal BK',
+                html: `
+                <div class="text-left text-sm text-slate-600 space-y-3">
+                    <p><b>1. Masuk Aplikasi:</b> Gunakan NIP/Username dan Password yang telah diberikan Admin.</p>
+                    <p><b>2. Input Jurnal:</b> Isi formulir kegiatan layanan BK pada menu 'Input'. Pastikan semua kolom terisi dengan baik.</p>
+                    <p><b>3. Riwayat & Cetak:</b> Lihat data yang tersimpan di menu 'Riwayat'. Anda bisa mengedit, menghapus, atau mencetak Laporan PDF per kegiatan.</p>
+                    <p><b>4. Lupa Password:</b> Silakan hubungi Admin melalui tombol WhatsApp di bawah form login.</p>
+                    <div class="mt-4 pt-3 border-t text-center text-xs text-brand-600 font-bold">
+                        Mappaguru Online &copy; 2026
+                    </div>
+                </div>
+                `,
+                icon: 'info',
+                confirmButtonText: 'Saya Mengerti',
+                confirmButtonColor: '#0ea5e9'
+            });
         }
 
         async function doLogin(e){
