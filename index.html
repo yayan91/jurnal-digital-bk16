@@ -25,12 +25,11 @@
         body { background-color: #f8fafc; color: #334155; }
         .hidden { display: none !important; }
         
-        /* Loading */
+        /* Loading & Modal */
         .loader { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 999; display: flex; justify-content: center; align-items: center; flex-direction: column; backdrop-filter: blur(5px); }
         .spin { width: 50px; height: 50px; border: 4px solid #e2e8f0; border-top-color: #2563eb; border-radius: 50%; animation: s 0.8s ease-in-out infinite; }
         @keyframes s { to { transform: rotate(360deg); } }
 
-        /* Modal & Tabs */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; display: flex; justify-content: center; align-items: center; padding: 10px; backdrop-filter: blur(2px); }
         .modal-box { background: white; width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); animation: popUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
         @keyframes popUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -38,39 +37,46 @@
         .tab-btn { padding: 12px; cursor: pointer; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent; flex: 1; text-align: center; transition: 0.3s; }
         .tab-btn.active { color: #2563eb; border-bottom-color: #2563eb; background: white; }
 
-        /* --- CSS KHUSUS CETAK PDF (ARIAL & MODERN) --- */
+        /* --- PERBAIKAN CSS CETAK PDF --- */
         @media print {
             @page { size: 21.5cm 33cm; margin: 1.5cm; }
-            body * { visibility: hidden; }
-            #printArea, #printArea * { visibility: visible; }
+            
+            /* Sembunyikan semua elemen body */
+            body > * { display: none !important; }
+            
+            /* Paksa Print Area Muncul */
             #printArea { 
-                position: absolute; left: 0; top: 0; width: 100%; 
-                font-family: Arial, Helvetica, sans-serif !important; /* Ganti ke Arial */
+                display: block !important; 
+                position: absolute; 
+                top: 0; left: 0; 
+                width: 100%; 
+                background-color: white;
+                z-index: 9999;
+                font-family: Arial, Helvetica, sans-serif !important; 
                 color: #000;
             }
 
-            /* Styling Tabel PDF yang Lebih Informatif */
+            /* Styling Tabel PDF */
             .tbl-pdf { width: 100%; border-collapse: collapse; font-size: 11pt; margin-bottom: 20px; }
             .tbl-pdf td { 
-                border: 1px solid #333; 
-                padding: 6px 10px; /* Spasi isi tabel */
+                border: 1px solid #000; 
+                padding: 6px 10px; 
                 vertical-align: top; 
                 line-height: 1.4;
             }
             .col-label { 
                 width: 28%; 
                 font-weight: bold; 
-                background-color: #f0f0f0 !important; /* Warna abu muda biar modern */
+                background-color: #f0f0f0 !important; 
                 -webkit-print-color-adjust: exact; 
             }
             
-            /* Header Kop */
+            /* Kop & TTD */
             .kop { text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; }
             .k1 { font-size: 14pt; font-weight: bold; text-transform: uppercase; }
             .k2 { font-size: 16pt; font-weight: bold; text-transform: uppercase; margin: 4px 0; }
             .k3 { font-size: 10pt; font-style: italic; }
 
-            /* Tanda Tangan */
             .ttd-wrap { display: flex; justify-content: space-between; margin-top: 40px; page-break-inside: avoid; }
             .ttd-box { text-align: center; width: 40%; font-size: 11pt; }
             .ttd-nama { font-weight: bold; text-decoration: underline; margin-top: 70px; }
@@ -86,11 +92,12 @@
 
     <div id="modalView" class="modal-overlay hidden">
         <div class="modal-box">
-            <div class="bg-brand-900 text-white p-4 flex justify-between items-center sticky top-0">
-                <h3 class="font-bold text-lg"><i class="fas fa-file-alt mr-2"></i> Detail Jurnal</h3>
+            <div class="bg-brand-900 text-white p-4 flex justify-between items-center sticky top-0 z-10">
+                <h3 class="font-bold text-lg"><i class="fas fa-file-alt mr-2"></i> Detail Jurnal Lengkap</h3>
                 <button onclick="closeModal()" class="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center"><i class="fas fa-times"></i></button>
             </div>
-            <div class="p-6" id="modalContent"></div>
+            <div class="p-6 space-y-4" id="modalContent">
+                </div>
             <div class="bg-gray-100 p-4 text-right">
                 <button onclick="closeModal()" class="bg-gray-500 text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-gray-600">Tutup</button>
             </div>
@@ -153,7 +160,8 @@
                     <form id="formJurnal" onsubmit="submitData(event)" class="space-y-5">
                         <input type="hidden" name="id" id="inputId">
                         
-                        <div class="grid md:grid-cols-2 gap-5"> <div>
+                        <div class="grid md:grid-cols-2 gap-5">
+                            <div>
                                 <label class="text-xs font-bold text-gray-500 block mb-1">TANGGAL KEGIATAN</label>
                                 <input type="date" name="tanggal" required class="w-full border p-3 rounded-lg bg-blue-50 focus:bg-white focus:ring-2 focus:ring-blue-300 outline-none">
                             </div>
@@ -184,7 +192,7 @@
 
                         <div class="grid md:grid-cols-2 gap-5">
                             <div><label class="text-xs font-bold text-gray-500 block mb-1">TUJUAN</label><textarea name="tujuan" rows="2" class="w-full border p-3 rounded-lg"></textarea></div>
-                            <div><label class="text-xs font-bold text-gray-500 block mb-1">MEDIA / ALAT</label><input type="text" name="media" class="w-full border p-3 rounded-lg"></div>
+                            <div><label class="text-xs font-bold text-gray-500 block mb-1">MEDIA / ALAT</label><input type="text" name="media" class="w-full border p-3 rounded-lg"></textarea></div>
                         </div>
 
                         <div><label class="text-xs font-bold text-gray-500 block mb-1">RINGKASAN PROSES</label><textarea name="ringkasan" rows="3" class="w-full border p-3 rounded-lg"></textarea></div>
@@ -297,7 +305,6 @@
                     document.getElementById('dSekolah').innerText=conf.sekolah;
                     document.getElementById('dGuru').innerText=user.nama;
                     
-                    // POPUP SELAMAT DATANG
                     Swal.fire({
                         icon: 'success',
                         title: 'Selamat Datang!',
@@ -319,7 +326,6 @@
         async function submitData(e){
             e.preventDefault();
             
-            // Konfirmasi Simpan SweetAlert
             const result = await Swal.fire({
                 title: 'Simpan Jurnal?',
                 text: "Pastikan data sudah benar",
@@ -385,17 +391,56 @@
             } catch(e){}
         }
 
+        // --- PERBAIKAN: POPUP MENAMPILKAN SEMUA DATA ---
         function viewItem(i){
             let d=historyData[i];
             let html=`
-                <table class="w-full text-sm border-collapse">
-                    <tr><td class="font-bold py-2 w-1/3 text-gray-500">Tanggal</td><td>: ${d.tanggal.substring(0,10)}</td></tr>
-                    <tr><td class="font-bold py-2 text-gray-500">Waktu</td><td>: ${d.jam} (${d.waktu})</td></tr>
-                    <tr><td class="font-bold py-2 text-gray-500">Sasaran</td><td>: ${d.sasaran} (${d.kelas})</td></tr>
-                    <tr><td class="font-bold py-2 text-gray-500">Layanan</td><td>: ${d.jenis}</td></tr>
-                    <tr><td colspan="2" class="pt-4"><div class="font-bold text-blue-900 mb-1">Topik Masalah</div><div class="bg-gray-50 p-2 rounded border">${d.topik}</div></td></tr>
-                    <tr><td colspan="2" class="pt-2"><div class="font-bold text-blue-900 mb-1">Ringkasan</div><div class="bg-gray-50 p-2 rounded border">${d.ringkasan}</div></td></tr>
-                </table>`;
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-4 grid grid-cols-2 gap-y-2 text-sm">
+                    <div><span class="text-xs font-bold text-gray-400 block">TANGGAL</span><span class="font-bold text-gray-800">${d.tanggal.substring(0,10)}</span></div>
+                    <div><span class="text-xs font-bold text-gray-400 block">WAKTU</span><span class="font-bold text-gray-800">${d.jam} (${d.waktu})</span></div>
+                    <div><span class="text-xs font-bold text-gray-400 block">SASARAN</span><span class="font-bold text-gray-800">${d.sasaran} (${d.kelas})</span></div>
+                    <div><span class="text-xs font-bold text-gray-400 block">LAYANAN</span><span class="font-bold text-gray-800">${d.jenis}</span></div>
+                    <div class="col-span-2"><span class="text-xs font-bold text-gray-400 block">BIDANG</span><span class="font-bold text-gray-800">${d.bidang}</span></div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 uppercase mb-1">Topik / Masalah</h4>
+                        <div class="p-3 bg-white border rounded text-gray-700 font-medium">${d.topik}</div>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-400 uppercase mb-1">Tujuan Layanan</h4>
+                            <div class="p-3 bg-white border rounded text-gray-600 text-sm h-full">${d.tujuan || '-'}</div>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-gray-400 uppercase mb-1">Media / Alat</h4>
+                            <div class="p-3 bg-white border rounded text-gray-600 text-sm h-full">${d.media || '-'}</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 uppercase mb-1">Ringkasan Proses</h4>
+                        <div class="p-3 bg-white border rounded text-gray-600 text-sm leading-relaxed">${d.ringkasan || '-'}</div>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-3">
+                         <div>
+                            <h4 class="text-[10px] font-bold text-gray-400 uppercase mb-1">Evaluasi</h4>
+                            <div class="p-2 bg-yellow-50 border border-yellow-100 rounded text-gray-600 text-xs">${d.evaluasi || '-'}</div>
+                        </div>
+                        <div>
+                            <h4 class="text-[10px] font-bold text-gray-400 uppercase mb-1">Tindak Lanjut</h4>
+                            <div class="p-2 bg-green-50 border border-green-100 rounded text-gray-600 text-xs">${d.tindaklanjut || '-'}</div>
+                        </div>
+                        <div>
+                            <h4 class="text-[10px] font-bold text-gray-400 uppercase mb-1">Catatan Khusus</h4>
+                            <div class="p-2 bg-gray-50 border border-gray-200 rounded text-gray-600 text-xs">${d.catatan || '-'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
             document.getElementById('modalContent').innerHTML=html;
             document.getElementById('modalView').classList.remove('hidden');
         }
@@ -429,7 +474,6 @@
         }
 
         async function deleteItem(id){
-            // Konfirmasi Hapus SweetAlert
             const result = await Swal.fire({
                 title: 'Yakin hapus data?',
                 text: "Data tidak bisa dikembalikan!",
