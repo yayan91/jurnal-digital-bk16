@@ -67,14 +67,25 @@
                 -webkit-print-color-adjust: exact; 
             }
             
-            .kop { text-align: center; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; }
+            /* CSS KOP SURAT DENGAN LOGO */
+            .kop-container {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 3px double black;
+                padding-bottom: 15px;
+                margin-bottom: 25px;
+            }
+            .kop-logo { width: 90px; height: 90px; object-fit: contain; }
+            .kop-text { text-align: center; flex: 1; padding: 0 10px; }
+            
             .k1 { font-size: 14pt; font-weight: bold; text-transform: uppercase; }
             .k2 { font-size: 16pt; font-weight: bold; text-transform: uppercase; margin: 2px 0; }
             .k3 { font-size: 10pt; font-style: italic; }
 
             .ttd-wrap { display: flex; justify-content: space-between; margin-top: 40px; page-break-inside: avoid; }
             .ttd-box { text-align: center; width: 40%; font-size: 11pt; }
-            .ttd-nama { font-weight: bold; text-decoration: underline; margin-top: 70px; }
+            .ttd-nama { font-weight: bold; text-decoration: underline; margin-top: 80px; }
         }
     </style>
 </head>
@@ -101,9 +112,8 @@
     <div id="pageLogin" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-blue-100">
         <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm border border-white/50">
             <div class="text-center mb-6">
-                <div class="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white text-3xl shadow-lg shadow-blue-500/30">
-                    <i class="fas fa-book-reader"></i>
-                </div>
+                <img src="https://lh3.googleusercontent.com/d/1MGchP5nPXQGHbkCjwUEdck8xN-c4Whyg" class="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-md">
+                
                 <h2 class="text-2xl font-bold text-gray-800">JURNAL BK</h2>
                 <p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Mappaguru Online</p>
             </div>
@@ -220,13 +230,20 @@
     </div>
 
     <div id="printArea" class="hidden">
-        <div class="kop">
-            <div class="k1" id="p_pem"></div>
-            <div class="k1" id="p_ins"></div>
-            <div class="k2" id="p_sek"></div>
-            <div class="k2" style="font-size:12pt; margin-top:-5px;">BIMBINGAN DAN KONSELING</div>
-            <div class="k3" id="p_almt"></div>
+        <div class="kop-container">
+            <img src="https://lh3.googleusercontent.com/d/1paUgNvlMQWsPkT3ccnQ16umwrOxZ7y_i" class="kop-logo">
+            
+            <div class="kop-text">
+                <div class="k1" id="p_pem"></div>
+                <div class="k1" id="p_ins"></div>
+                <div class="k2" id="p_sek"></div>
+                <div class="k2" style="font-size:12pt; margin-top:-5px;">BIMBINGAN DAN KONSELING</div>
+                <div class="k3" id="p_almt"></div>
+            </div>
+            
+            <img src="https://lh3.googleusercontent.com/d/1MGchP5nPXQGHbkCjwUEdck8xN-c4Whyg" class="kop-logo">
         </div>
+
         <div class="judul-pdf" id="p_judul" style="text-align:center; font-weight:bold; text-decoration:underline; font-size:12pt; margin-top:15px; text-transform:uppercase;">LAPORAN PELAKSANAAN LAYANAN BIMBINGAN DAN KONSELING</div>
         <div class="info-ta" style="text-align:center; font-size:11pt; font-weight:bold; margin-bottom:20px;">
             Tahun Pelajaran: <span id="p_ta"></span> | Semester: <span id="p_sem"></span>
@@ -494,13 +511,12 @@
             document.getElementById('p_ta').innerText=conf.ta;
             document.getElementById('p_sem').innerText=conf.semester;
 
-            // --- PERUBAHAN FORMAT TANGGAL DI SINI ---
             let dateObj = new Date(d.tanggal);
             let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             let formattedDate = dateObj.toLocaleDateString('id-ID', options);
 
-            document.getElementById('t1').innerText=formattedDate; // Masuk ke tabel
-            document.getElementById('ptglttd').innerText=formattedDate; // Masuk ke TTD
+            document.getElementById('t1').innerText=formattedDate; 
+            document.getElementById('ptglttd').innerText=formattedDate; 
 
             document.getElementById('t2').innerText=d.jam; document.getElementById('t3').innerText=d.waktu;
             document.getElementById('t4').innerText=d.sasaran; document.getElementById('t5').innerText=d.kelas;
