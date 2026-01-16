@@ -494,7 +494,7 @@
                 <p>NIP. <span id="pnipkep"></span></p>
             </div>
             <div class="ttd-box">
-                <p>Makassar, <span id="ptglttd"></span><br>Guru BK</p>
+                <p>Makassar, <span id="ptglttd"></span><br>Guru Bimbingan dan Konseling</p>
                 <div class="ttd-nama" id="pguru"></div>
                 <p>NIP. <span id="pnipguru"></span></p>
             </div>
@@ -917,9 +917,13 @@
             let dateObj = new Date(d.tanggal);
             let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             let formattedDate = dateObj.toLocaleDateString('id-ID', options);
+            
+            // Format khusus tanda tangan (tanpa hari)
+            let optionsSig = { day: 'numeric', month: 'long', year: 'numeric' };
+            let signatureDate = dateObj.toLocaleDateString('id-ID', optionsSig);
 
             document.getElementById('t1').innerText=formattedDate; 
-            document.getElementById('ptglttd').innerText=formattedDate; 
+            document.getElementById('ptglttd').innerText=signatureDate; 
 
             document.getElementById('t2').innerText=d.jam; document.getElementById('t3').innerText=d.waktu;
             document.getElementById('t4').innerText=d.sasaran; document.getElementById('t5').innerText=d.kelas;
@@ -955,5 +959,3 @@
     </script>
 </body>
 </html>
-
-
